@@ -1,3 +1,32 @@
-baseURL = "http://example.org/"
-languageCode = "en-us"
-title = "My New Hugo Site"
+theme = "hugo-theme-codex" 
+
+# Override these settings with your own
+title = "Personal Bio"
+languageCode = "en-uk"
+baseURL = "https://ravindrabhadti.uk/"
+copyright = "© 2020"
+
+# Controls the navigation
+[[menu.main]]
+  identifier = "about"
+  name = "about"
+  title = "About"
+  url = "/"
+
+[[menu.main]]
+  identifier = "blog"
+  name = "blog"
+  title = "Blog"
+  url = "/blog"
+
+[params]
+  dateFormat = "Jan 2 2006"
+
+  # Links to your social accounts, comment/uncomment as needed. Icons will be displayed for those specified.
+  github = "https://github.com/rbhadti94"
+  linkedin = "https://www.linkedin.com/in/ravindra-bhadti"
+  
+  # Titles for your icons (shown as tooltips), and also their display order.
+  # Currently, these icons are supported: 
+  #   "Twitter", "GitHub", "Email", "Facebook", "GitLab", "Instagram", "LinkedIn", "YouTube"
+  iconOrder = ["LinkedIn", "GitHub"]
