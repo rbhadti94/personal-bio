@@ -1,0 +1,87 @@
+name: Deploy Personal Bio Website To Heroku
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  APPLICATION_NAME: "personal-bio-rb"
+  HUGO_FOLDER: "personal-bio"  
+  APPLICATION_DOMAIN_SUFFIX: herokuapp.com
+  HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+  REGISTRY_URL: docker.pkg.github.com
+  APPLICATION_VERSION: sha-${{ github.sha }}
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.74.3'
+      
+      - name: Build Hugo Pages
+        run: cd ${{ env.HUGO_FOLDER }} && hugo --minify
+
+      - name: Build tagged image
+        uses: docker/build-push-action@v1.1.0
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+          registry: ${{ env.REGISTRY_URL }}
+          repository: ${{ github.repository }}/${{ env.HUGO_FOLDER }}
+          tags: ${{ env.APPLICATION_VERSION }}
+          push: false
+      
+      - name: Run Container Structure Tests
+        run: echo "Running container tests"
+
+      - name: Upload Artifact to Github Packages
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.APPLICATION_NAME }}-${{ env.APPLICATION_VERSION }}
+          path: ${{ github.workspace }}
+
+      - name: Push tagged image
+        uses: docker/build-push-action@v1.1.0
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+          registry: ${{ env.REGISTRY_URL }}
+          repository: ${{ github.repository }}/${{ env.HUGO_FOLDER }}
+          tags: ${{ env.APPLICATION_VERSION }}
+          push: true
+
+      - name: Build & Push latest image
+        uses: docker/build-push-action@v1.1.0
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+          registry: ${{ env.REGISTRY_URL }}
+          repository: ${{ github.repository }}/${{ env.HUGO_FOLDER }}
+          tags: latest
+          push: true
+
+  deploy_to_heroku:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.APPLICATION_NAME }}-${{ env.APPLICATION_VERSION }}
+
+      - name: Heroku Login
+        run: heroku container:login
+      
+      - name: Push Image To Heroku
+        run: heroku container:push -a ${{ env.APPLICATION_NAME }} web
+
+      - name: Release Application
+        run: heroku container:release -a ${{ env.APPLICATION_NAME }} web

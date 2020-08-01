@@ -3,7 +3,7 @@ theme = "hugo-theme-codex"
 # Override these settings with your own
 title = "Personal Bio"
 languageCode = "en-uk"
-baseURL = "https://ravindrabhadti.uk/"
+baseURL = "https://ravindra-bhadti-personal-bio.herokuapp.com"
 copyright = "© 2020"
 
 # Controls the navigation
@@ -17,7 +17,7 @@ copyright = "© 2020"
   identifier = "blog"
   name = "blog"
   title = "Blog"
-  url = "/blog"
+  url = "/blog/"
 
 [params]
   dateFormat = "Jan 2 2006"
