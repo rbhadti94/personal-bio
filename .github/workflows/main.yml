@@ -2,7 +2,7 @@ name: Deploy Personal Bio Website To Heroku
 
 on:
   push:
-    branches: [ master ]
+    branches: [ 'master','feature/*' ]
   pull_request:
     branches: [ master ]
 
@@ -41,7 +41,10 @@ jobs:
           push: false
       
       - name: Run Container Structure Tests
-        run: echo "Running container tests"
+        uses: plexsystems/container-structure-test-action@v0.1.0
+        with:
+          image: ${{ env.REGISTRY_URL }}/${{ github.repository }}/${{ env.HUGO_FOLDER }}:${{ env.APPLICATION_VERSION }}
+          config: tests/PersonalBioContainerTests.yaml
 
       - name: Upload Artifact to Github Packages
         uses: actions/upload-artifact@v2
