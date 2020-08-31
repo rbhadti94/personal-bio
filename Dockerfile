@@ -1,4 +1,4 @@
-FROM nginx:1.19.1-alpine
+FROM nginx:1.19.2-alpine
 
 LABEL "maintainer" "rbhadti94"
 LABEL "uk.ravindrabhadti.application" "personal-bio"
