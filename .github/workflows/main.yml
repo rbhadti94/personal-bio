@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.APPLICATION_NAME }}-${{ env.APPLICATION_VERSION }}
-          path: ${{ github.workspace }}
+          path: ${{ github.workspace }}/${{ env.HUGO_FOLDER }}
 
       - name: Push tagged image
         uses: docker/build-push-action@v1.1.0
